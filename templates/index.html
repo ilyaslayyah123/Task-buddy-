@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TaskBuddy – AI Assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🤖 TaskBuddy</h1>
+      <div class="theme-toggle">
+        <label class="switch">
+          <input type="checkbox" id="darkToggle">
+          <span class="slider round"></span>
+        </label>
+        <span>Dark Mode</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="query-section">
+        <input type="text" id="queryInput" placeholder="What's your question today?">
+        <div class="button-group">
+          <button onclick="sendQuery()">Ask</button>
+          <button onclick="recordVoice()">🎙️</button>
+        </div>
+        <div id="loadingSpinner" class="spinner hidden"></div>
+        <div id="responseArea" class="response-area"></div>
+      </section>
+
+      <section class="reminder-section">
+        <h2>🕑 Set a Reminder</h2>
+        <input type="text" id="task" placeholder="e.g., Submit assignment">
+        <input type="datetime-local" id="time">
+        <button onclick="setReminder()">Add Reminder</button>
+      </section>
+
+      <section class="reminder-list">
+        <h2>📋 Your Reminders</h2>
+        <div id="reminders"></div>
+      </section>
+    </main>
+  </div>
+  
+  
+  <footer>
+    <p>Made with ❤️ by <a href="https://github.com/ilyaslayyah123">Muhammad ilyas</a></p>
+  </footer>
+
+
+  <script>
+    function sendQuery() {
+      const query = document.getElementById('queryInput').value;
+      const spinner = document.getElementById('loadingSpinner');
+      spinner.classList.remove('hidden');
+      fetch('/query', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `query=${query}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        spinner.classList.add('hidden');
+        document.getElementById('responseArea').innerText = data.response;
+      });
+    }
+
+    function setReminder() {
+      const task = document.getElementById('task').value;
+      const time = document.getElementById('time').value;
+      fetch('/set_reminder', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `task=${task}&time=${time}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        loadReminders();
+      });
+    }
+
+    function loadReminders() {
+      fetch('/reminders')
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('reminders');
+        list.innerHTML = '';
+        data.reminders.forEach((r, i) => {
+          const card = document.createElement('div');
+          card.className = 'reminder-card';
+          card.innerHTML = `
+            <input type="checkbox" onclick="toggleComplete(this)">
+            <strong>${r.task}</strong><br>
+            <span>${r.time}</span><br>
+            <button onclick="deleteReminder(${i})">🗑️ Delete</button>
+          `;
+          list.appendChild(card);
+        });
+      });
+    }
+
+    function deleteReminder(index) {
+      fetch('/delete_reminder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `index=${index}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        loadReminders();
+      });
+    }
+
+    function toggleComplete(checkbox) {
+      const parent = checkbox.parentElement;
+      if (checkbox.checked) {
+        parent.style.textDecoration = "line-through";
+        parent.style.opacity = 0.6;
+      } else {
+        parent.style.textDecoration = "none";
+        parent.style.opacity = 1;
+      }
+    }
+
+    function recordVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const query = event.results[0][0].transcript;
+        document.getElementById('queryInput').value = query;
+        sendQuery();
+      };
+
+      recognition.onerror = function(event) {
+        alert('Voice input error: ' + event.error);
+      };
+    }
+
+    document.getElementById('darkToggle').addEventListener('change', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    window.onload = loadReminders;
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | TaskBuddy</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+</head>
+<body>
+  <div class="form-container">
+    <h2>👤 Create Account</h2>
+    <form method="POST">
+      <input type="text" name="username" placeholder="Choose Username" required />
+      <input type="password" name="password" placeholder="Choose Password" required />
+      <button type="submit">Register</button>
+      {% if error %}<p class="error">{{ error }}</p>{% endif %}
+      <p class="switch">Already have an account? <a href="/">Login</a></p>
+    </form>
+  </div>
+</body>
+</html>
