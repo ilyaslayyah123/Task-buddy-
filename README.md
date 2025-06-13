@@ -1,4 +1,4 @@
-# 🤖 TaskBuddy – AI Assistant
+ # 🤖 TaskBuddy – AI Assistant
 
 TaskBuddy is a smart, real-time AI assistant built with Flask that helps users ask questions, set task reminders, use voice commands, and receive push notifications. It features a clean web UI with login, logout, and profile support.
 
@@ -72,8 +72,10 @@ taskbuddy/
             value: production
       Deploy at https://render.com
   ### 🙌 Author
- Muhammad Ilyas – AI Developer & Python Enthusiast
-📧 Connect on  www.linkedin.com/in/muhammad-ilyas-a59bb0289
+ Muhammad Ilyas – AI Developer & Python Enthusiast.
+ 
+📧 Connect on  www.linkedin.com/in/muhammad-ilyas-a59bb0289 .
+
 🧠 Built with Flask, JS, and 💙 for AI.
     
 
