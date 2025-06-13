@@ -1,0 +1,11 @@
+Flask
+openai
+requests
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
+SpeechRecognition
+pyttsx3
+flask-cors
+pywebpush
